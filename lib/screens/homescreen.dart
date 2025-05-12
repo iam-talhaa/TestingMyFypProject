@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -9,15 +10,106 @@ class Homescreen extends StatefulWidget {
 
 class _HomescreenState extends State<Homescreen> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _1_age_Controller = TextEditingController();
-  TextEditingController _2textEditingController = TextEditingController();
-  TextEditingController _3textEditingController = TextEditingController();
-  TextEditingController _4textEditingController = TextEditingController();
-  TextEditingController _5textEditingController = TextEditingController();
-  TextEditingController _6textEditingController = TextEditingController();
-  TextEditingController _7textEditingController = TextEditingController();
-  TextEditingController _8textEditingController = TextEditingController();
-  TextEditingController _9textEditingController = TextEditingController();
+
+  var result = 'nothing';
+  late var interpreter;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    LoadModel();
+  }
+
+  LoadModel() async {
+    interpreter = await Interpreter.fromAsset('assets/ann_model.tflite');
+  }
+
+  performAction() {
+    int i_age = int.parse(age_Controller.text);
+    int i_Gender = int.parse(gender_Controller.text);
+    double i_Bmi = double.parse(Bmi_Controller.text);
+    double i_Alcholic_consumption = double.parse(Alchoholic_c_Controller.text);
+    int i_smoking = int.parse(Smoking_Controller.text);
+    int i_Genetic_risk = int.parse(Genetic_risk_Controller.text);
+    double i_physically_Activity = double.parse(Physically_Ac_Controller.text);
+    int i_diabetes = int.parse(Diabeties_Controller.text);
+    int i_hypertension = int.parse(hypertension_Controller.text);
+    double i_liver_funtion = double.parse(LIver_Test_Controller.text);
+
+    var input_age = [i_age];
+    var input_gender = [i_Gender];
+    var input_Bmi = [i_Bmi];
+    var input_Alcholic_consumption = [i_Alcholic_consumption];
+    var input_smoking = [i_smoking];
+    var input_genetic = [i_Genetic_risk];
+    var input_physically = [i_physically_Activity];
+    var input_diabetes = [i_diabetes];
+    var input_hyperten = [i_hypertension];
+    var input_liver = [i_liver_funtion];
+
+    // input: List<Object>
+    var inputs = [
+      input_age,
+      input_gender,
+      input_Bmi,
+      input_Alcholic_consumption,
+      input_smoking,
+      input_genetic,
+      input_physically,
+      input_diabetes,
+      input_hyperten,
+      input_liver,
+    ];
+
+    var output_age = List<double>.filled(1, 0);
+    var output_gender = List<double>.filled(1, 0);
+    var output_Bmi = List<double>.filled(1, 0);
+    var output_Alchohol = List<double>.filled(1, 0);
+    var output_smoking = List<double>.filled(1, 0);
+    var output_gentic = List<double>.filled(1, 0);
+    var output_physically = List<double>.filled(1, 0);
+    var output_diabetes = List<double>.filled(1, 0);
+    var output_hypertension = List<double>.filled(1, 0);
+    var output_liver = List<double>.filled(1, 0);
+
+    // output: Map<int, Object>
+    var outputs = {
+      0: output_age,
+      1: output_gender,
+      2: output_Bmi,
+      3: output_Alchohol,
+      4: output_smoking,
+      5: output_gentic,
+      6: output_physically,
+      7: output_diabetes,
+      8: output_hypertension,
+      9: output_liver,
+    };
+
+    print("liver");
+    print(output_liver);
+    // inference
+    interpreter.runForMultipleInputs(inputs, outputs);
+
+    // print outputs
+    print(outputs);
+  }
+
+  TextEditingController age_Controller = TextEditingController();
+  TextEditingController gender_Controller = TextEditingController();
+  TextEditingController Bmi_Controller = TextEditingController();
+
+  TextEditingController Alchoholic_c_Controller = TextEditingController();
+  TextEditingController Smoking_Controller = TextEditingController();
+
+  TextEditingController Genetic_risk_Controller = TextEditingController();
+  TextEditingController Physically_Ac_Controller = TextEditingController();
+  TextEditingController Diabeties_Controller = TextEditingController();
+
+  TextEditingController hypertension_Controller = TextEditingController();
+  TextEditingController LIver_Test_Controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +135,7 @@ class _HomescreenState extends State<Homescreen> {
                       height: 45,
                       width: 150,
                       child: TextFormField(
-                        controller: _1_age_Controller,
+                        controller: age_Controller,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
@@ -60,12 +152,13 @@ class _HomescreenState extends State<Homescreen> {
                       height: 45,
                       width: 150,
                       child: TextFormField(
+                        controller: gender_Controller,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
                           prefixIcon: Icon(Icons.person_2_sharp),
-                          hintText: 'Height',
+                          hintText: 'Gender',
                           fillColor: Colors.white,
                           filled: true,
                         ),
@@ -73,6 +166,132 @@ class _HomescreenState extends State<Homescreen> {
                     ),
                   ],
                 ),
+                SizedBox(height: 10),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: 45,
+                      width: 150,
+                      child: TextFormField(
+                        controller: Bmi_Controller,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          prefixIcon: Icon(Icons.person_2_sharp),
+                          hintText: 'BMI',
+                          fillColor: Colors.white,
+                          filled: true,
+                        ),
+                      ),
+                    ),
+
+                    Container(
+                      height: 45,
+                      width: 150,
+                      child: TextFormField(
+                        controller: Alchoholic_c_Controller,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          prefixIcon: Icon(Icons.person_2_sharp),
+                          hintText: 'Alchoholic Consumption',
+                          fillColor: Colors.white,
+                          filled: true,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: Smoking_Controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    prefixIcon: Icon(Icons.person_2_sharp),
+                    hintText: 'smoking',
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: Genetic_risk_Controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    prefixIcon: Icon(Icons.person_2_sharp),
+                    hintText: 'GeneticRisk',
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: Physically_Ac_Controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    prefixIcon: Icon(Icons.person_2_sharp),
+                    hintText: 'physcicalyy activity',
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: Diabeties_Controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    prefixIcon: Icon(Icons.person_2_sharp),
+                    hintText: 'diabetes',
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: hypertension_Controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    prefixIcon: Icon(Icons.person_2_sharp),
+                    hintText: 'hypertension',
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: LIver_Test_Controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    prefixIcon: Icon(Icons.person_2_sharp),
+                    hintText: 'Liver Function test',
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    performAction();
+                  },
+                  child: Text("Detection"),
+                ),
+
+                Text(result),
               ],
             ),
           ),
